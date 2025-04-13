@@ -1,13 +1,13 @@
 import pickle
 import pandas as np
-from sklearn.preprocessing import PowerTransformer
+from sklearn.preprocessing import StandardScaler
 from flask import Flask,request,jsonify,render_template
 
 application=Flask(__name__)
 app=application
 
-linreg=pickle.load(open('model/reg.pkl','rb'))
-power_transformer=pickle.load(open('model/pt.pkl','rb'))
+rf=pickle.load(open('model/rf.pkl','rb'))
+standard_scaler=pickle.load(open('model/scaler.pkl','rb'))
 
 @app.route('/',methods=['GET','POST'])
 
@@ -22,8 +22,8 @@ def predict_data():
         Fine_Aggregate=float(request.form.get('Fine Aggregate'))
         Age=float(request.form.get('Age'))
 
-        new_data_pt=power_transformer.transform([[Cement,Blast_Furnace_Slag,Fly_Ash,Water,Superplaticizer,Coarse_Aggregate,Fine_Aggregate,Age]])
-        result=linreg.predict(new_data_pt)
+        new_data_pt=standard_scaler.transform([[Cement,Blast_Furnace_Slag,Fly_Ash,Water,Superplaticizer,Coarse_Aggregate,Fine_Aggregate,Age]])
+        result=rf.predict(new_data_pt)
         return render_template('home.html',results=result[0])
     else:
         return render_template('home.html')
